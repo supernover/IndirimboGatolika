@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">VL Music</string>
+    <string name="app_name"> Indirimbo za kiliziya </string>
+    <string name="Alert_message_uploader">Do you really want to Upload Your Choir Audio/song  here ? \n if is yes Before you start creating your release, make sure you have everything you need for the upload like :Photo of Choir , collect name of music \n\n  *Audio files must meet the following requirements:  \n -Only catholic songs \n -No Artist song\n-Official Audio \n -to protect our privacy , Audio does not belong to catholic  it will be removed \n-make sure your Audio was not uploaded here \n-a copyrighted audio  may not be published.
+
+    </string>
+    <string name="yego">Yego</string>
+    <string name="oya">Oya</string>
+    <string name="custom_alert">With this indirimbo za kiliziya  catholic  app , \n you can listen to all  musics and play hundreds  of songs of catholic choirs made \n
+        in ( kinyarwanda/ burundi) \n
+        - from all over the country .\n\n\n\n Listen, sing and learn</string>
 </resources>

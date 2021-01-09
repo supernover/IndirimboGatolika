@@ -1,23 +1,36 @@
-package com.kee.vlmusic;
+package com.Catholic.Choirmusics;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.jean.jcplayer.model.JcAudio;
 import com.example.jean.jcplayer.view.JcPlayerView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,11 +57,69 @@ public class MusicActivity extends AppCompatActivity {
     JcPlayerView jcPlayerView;
     List<JcAudio> jcAudios;
     List<String> thumbnail;
+    private AppOpenAdManager appOpenAdManager;
+
+    private int numActivityRestarted = 0;
+    private InterstitialAd mInterstitialAd;
+    View alertView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+
+        LayoutInflater inflate = LayoutInflater.from(this);
+        alertView = inflate.inflate(R.layout.dialog, null);
+        Button btn= (Button) alertView.findViewById(R.id.btn);
+
+        showDialog();
+
+        appOpenAdManager = ((MyApplication) getApplication()).getAppOpenAdManager();
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {}
+        });
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3063877521249388/9384119552");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+            }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError adError) {
+                // Code to be executed when an ad request fails.
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the interstitial ad is closed.
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+        });
+
+
+
+
+
         progressDialog = new ProgressDialog(this);
         progressDialog.show();
         progressDialog.setMessage("Please Wait...");
@@ -65,6 +136,11 @@ public class MusicActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    Log.d("TAG", "Nta tangazo rihari !.");
+                }
                 jcPlayerView.playAudio(jcAudios.get(i));
                 jcPlayerView.setVisibility(View.VISIBLE);
                 jcPlayerView.createNotification();
@@ -139,5 +215,27 @@ public class MusicActivity extends AppCompatActivity {
                 }).check();
         return checkPermission;
 
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        numActivityRestarted++;
+
+        if (canShowAppOpenAd()) {
+            appOpenAdManager.showAdIfAvailable();
+        }
+    }
+
+    private boolean canShowAppOpenAd() {
+        return numActivityRestarted % 3 == 0;
+    }
+
+    public void showDialog(){
+        Dialog alertDialog = new Dialog(MusicActivity.this);
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.setContentView(alertView);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
     }
 }
