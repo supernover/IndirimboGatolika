@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".MyApplication"
@@ -16,9 +18,12 @@
         <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3063877521249388~4552247669"/>
+            android:value="ca-app-pub-3063877521249388~4552247669" />
 
-        <activity android:name=".SplashActivity">
+        <activity
+            android:name=".SplashActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,8 +31,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".UploadSongActivity" />
-        <activity android:name=".MusicActivity">
-        </activity>
+        <activity android:name=".MusicActivity"></activity>
     </application>
 
 </manifest>

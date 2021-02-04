@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "30.0.1"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "com.Catholic.Choirmusics"
-        minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 2
+        versionName "2.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -19,6 +19,22 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    allprojects {
+        repositories {
+
+            maven { url "https://jitpack.io" }
         }
     }
 }
@@ -44,4 +60,11 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     implementation "com.google.android.gms:play-services-ads:19.6.0"
     implementation 'com.android.support:multidex:1.0.3'
+    implementation "com.airbnb.android:lottie:3.4.0"
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'org.imaginativeworld.oopsnointernet:oopsnointernet:2.0.0'
+    implementation 'com.github.Shashank02051997:FancyGifDialog-Android:1.3'
 }
+
+
+
