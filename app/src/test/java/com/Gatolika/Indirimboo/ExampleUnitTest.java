@@ -1,4 +1,4 @@
-package com.Catholic.Choirmusics;
+package com.Gatolika.Indirimboo;
 
 import org.junit.Test;
 

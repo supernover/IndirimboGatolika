@@ -1,34 +1,22 @@
-package com.Catholic.Choirmusics;
+package com.Gatolika.Indirimboo;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.widget.SearchView;
@@ -44,7 +32,8 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,18 +47,16 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback;
-import org.imaginativeworld.oopsnointernet.dialogs.pendulum.DialogPropertiesPendulum;
 import org.imaginativeworld.oopsnointernet.dialogs.pendulum.NoInternetDialogPendulum;
 import org.imaginativeworld.oopsnointernet.dialogs.signal.DialogPropertiesSignal;
 import org.imaginativeworld.oopsnointernet.dialogs.signal.NoInternetDialogSignal;
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire;
-import org.imaginativeworld.oopsnointernet.snackbars.fire.SnackbarPropertiesFire;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MusicActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class MusicMainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     private boolean checkPermission = false;
     ProgressDialog progressDialog;
     ListView listView;
@@ -77,10 +64,13 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
     List<String> songsUrlList;
     List<String> songsArtistList;
     List<String> songsDurationList;
-    ListAdapter adapter;
+    ListingAdapter adapter;
     JcPlayerView jcPlayerView;
     List<JcAudio> jcAudios;
     List<String> thumbnail;
+    LinearLayout download, detail_layout, commentB, play;
+    Intent intent;
+
     private AppOpenAdManager appOpenAdManager;
 
     private int numActivityRestarted = 0;
@@ -88,6 +78,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
     View alertView;
     private AdView adViewMessage;
 
+    private BottomNavigationView mainBottomNav;
 
     // No Internet Dialog: Pendulum
     private NoInternetDialogPendulum noInternetDialogPendulum;
@@ -97,11 +88,18 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
 
     // No Internet Snackbar: Fire
     private NoInternetSnackbarFire noInternetSnackbarFire;
+    FloatingActionButton post;
+    InAppReviewHelper inAppReviewHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        post = findViewById(R.id.post_button);
+       // inAppReviewHelper.displayInAppReview();
 
 
 
@@ -157,10 +155,9 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
 
 
         LayoutInflater inflate = LayoutInflater.from(this);
-        alertView = inflate.inflate(R.layout.dialog, null);
-        Button btn= (Button) alertView.findViewById(R.id.btn);
 
-        showDialog();
+
+
 
         appOpenAdManager = ((MyApplication) getApplication()).getAppOpenAdManager();
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -274,8 +271,26 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
 
 
 
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-    }
+                if (validatePermissions()){
+
+                Intent intent = new Intent(getApplicationContext(), Uploading.class);
+                startActivity(intent);
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+}
 
     // RETRIEVING THE SONGS FROM THE SERVER
    /* public void retrieveSongs() {
@@ -293,7 +308,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
 
                     jcAudios.add(JcAudio.createFromURL(song.getSongName(), song.getSongUrl()));
                 }
-                adapter = new ListAdapter(getApplicationContext(), songsNameList, thumbnail, songsArtistList, songsDurationList);
+                adapter = new ListingAdapter(getApplicationContext(), songsNameList, thumbnail, songsArtistList, songsDurationList);
                 jcPlayerView.initPlaylist(jcAudios, null);
                 listView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -301,7 +316,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(MusicActivity.this, "FAILED!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MusicMainActivity.this, "FAILED!", Toast.LENGTH_SHORT).show();
             }
         });
     }*/
@@ -318,7 +333,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
                     songsList.add(song);
                     jcAudios.add(JcAudio.createFromURL(song.getSongName(), song.getSongUrl()));
                 }
-                adapter = new ListAdapter(getApplicationContext(), songsList);
+                adapter = new ListingAdapter(getApplicationContext(), songsList);
                 jcPlayerView.initPlaylist(jcAudios, null);
                 listView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -326,7 +341,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(MusicActivity.this, "FAILED!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MusicMainActivity.this, "FAILED!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -334,7 +349,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.searchmenu, menu);
+        getMenuInflater().inflate(R.menu.bottom_bar_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);
 
@@ -353,6 +368,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
         int id = item.getItemId();
 
         if (id == R.id.search) {
+            post.setVisibility(View.GONE);
             return true;
         }
         else if (id == R.id.Report){
@@ -367,16 +383,6 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
                 intent.putExtra(Intent.EXTRA_TEXT, "your_text");
                 startActivity(intent);
             }
-
-        else if(id == R.id.Rate){
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
-            } else {
-                //log.d("TAG", "The intersitial wasn't loaded yet.");
-            }
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getString(R.string.packegname)));
-            startActivity(intent);
-        }
         else if (id ==R.id.sharemenu){
             if (mInterstitialAd.isLoaded()) {
                 mInterstitialAd.show();
@@ -387,23 +393,10 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT,
-                    "Hey ! check out this  music service that gives you access to Hundreds  of catholic  songs. through Catholic app at: https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
+                    "Hey ! check out this  music service that gives you access to Hundreds  of catholic  songs. through Gatolika app at: https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
 
-
-        }
-        else  if(id == R.id.uploadItem){
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
-            } else {
-                //log.d("TAG", "The intersitial wasn't loaded yet.");
-            }
-
-            if (validatePermissions()){
-                Intent intent = new Intent(this,UploadSongActivity.class);
-                startActivity(intent);
-            }
 
         }
 
@@ -446,14 +439,7 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
         return numActivityRestarted % 3 == 0;
     }
 
-    public void showDialog(){
 
-        Dialog alertDialog = new Dialog(MusicActivity.this);
-        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        alertDialog.setContentView(alertView);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        alertDialog.show();
-    }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -482,7 +468,9 @@ public class MusicActivity extends AppCompatActivity implements SearchView.OnQue
             e.printStackTrace();
         }
         String currentVersion = packageInfo.versionName;
-        new ForceUpdateAsync(currentVersion,MusicActivity.this).execute();
+        new ForceUpdateAsync(currentVersion, MusicMainActivity.this).execute();
     }
+
+
 
 }

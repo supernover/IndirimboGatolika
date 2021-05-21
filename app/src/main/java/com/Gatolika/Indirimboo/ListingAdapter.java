@@ -1,4 +1,4 @@
-package com.Catholic.Choirmusics;
+package com.Gatolika.Indirimboo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -17,17 +17,16 @@ import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.cardview.widget.CardView;
 
-public class ListAdapter extends BaseAdapter implements Filterable {
+public class ListingAdapter extends BaseAdapter implements Filterable {
 
     private final Context context;
     private final List<Song> songlist;
     private final List<Song> filteredList;
 
-    public ListAdapter(Context context, List<Song> songlist) {
+    public ListingAdapter(Context context, List<Song> songlist) {
         this.context = context;
         this.songlist = songlist;
         filteredList = new ArrayList<>();
@@ -75,6 +74,8 @@ public class ListAdapter extends BaseAdapter implements Filterable {
     }
 
 
+
+
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -120,6 +121,7 @@ public class ListAdapter extends BaseAdapter implements Filterable {
         ImageView thumbnail;
         CardView cardView;
         ImageView currentlyPlaying;
+        TextView textView2;
 
         ViewHolder(View view){
             songName = view.findViewById(R.id.songName);
@@ -128,6 +130,20 @@ public class ListAdapter extends BaseAdapter implements Filterable {
             songDuration = view.findViewById(R.id.songDuration);
             cardView = view.findViewById(R.id.cardView);
             currentlyPlaying = view.findViewById(R.id.currentlyPlaying);
+            textView2 = view.findViewById(R.id.textView2);
+            //trending_album = view.findViewById(R.id.trending_album);
+            //imageButton = view.findViewById(R.id.imageButton);
+
+            //t_download.setOnClickListener((View.OnClickListener) this);
+
         }
+
+
+
+
+
+
     }
+
+
 }

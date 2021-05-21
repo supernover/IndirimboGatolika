@@ -1,4 +1,4 @@
-package com.Catholic.Choirmusics;
+package com.Gatolika.Indirimboo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,8 +9,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
@@ -34,13 +32,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.shashank.sony.fancygifdialoglib.FancyGifDialog;
+import com.shashank.sony.fancygifdialoglib.FancyGifDialogListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class UploadSongActivity extends AppCompatActivity {
+public class Uploading extends AppCompatActivity {
     Uri uriSong, image;
     byte[] bytes;
     String fileName, songUrl, imageUrl;
@@ -59,9 +59,9 @@ public class UploadSongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_song);
 
-        CustomDialogClass cdd = new CustomDialogClass(UploadSongActivity.this);
-        cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        cdd.show();
+
+
+
         Objects.requireNonNull(getSupportActionBar()).setTitle("Upload Song");
         storageReference = FirebaseStorage.getInstance().getReference();
         progressDialog = new ProgressDialog(this);
@@ -85,6 +85,34 @@ public class UploadSongActivity extends AppCompatActivity {
                 pickImage();
             }
         });
+
+
+        new FancyGifDialog.Builder(this)
+                .setTitle("WARNING!") // You can also send title like R.string.from_resources
+                .setMessage("Please upload your own music and belong to catholic church only ,If you use copyrighted music without a license, you can get a copyright strike. indirimbo Gatolika could block your Account and remove your choir/solo music  directly .") // or pass like R.string.description_from_resources
+                .setNegativeBtnText("Cancel") // or pass it like android.R.string.cancel
+                .setPositiveBtnBackground(R.color.infoColor) // or pass it like R.color.positiveButton
+                .setPositiveBtnText("Ok") // or pass it like android.R.string.ok
+                .setNegativeBtnBackground(R.color.errorColor) // or pass it like R.color.negativeButton
+                .setGifResource(R.drawable.ggif)   //Pass your Gif here
+                .isCancellable(true)
+                .OnPositiveClicked(new FancyGifDialogListener() {
+                    @Override
+                    public void OnClick() {
+
+
+                        Toast.makeText(Uploading.this,"Ok",Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .OnNegativeClicked(new FancyGifDialogListener() {
+                    @Override
+                    public void OnClick() {
+                        Intent intent = new Intent(getApplicationContext(), MusicMainActivity.class);
+                        startActivity(intent);
+                        Toast.makeText(Uploading.this,"Cancel",Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .build();
     }
 
     // SELECT THE SONG TO UPLOAD FROM MOBILE STORAGE

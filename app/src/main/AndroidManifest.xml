@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.Catholic.Choirmusics">
+    package="com.Gatolika.Indirimboo">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,7 +21,7 @@
             android:value="ca-app-pub-3063877521249388~4552247669" />
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".Splashing"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -30,8 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UploadSongActivity" />
-        <activity android:name=".MusicActivity"></activity>
+        <activity android:name=".Uploading" />
+        <activity android:name=".MusicMainActivity"/>
     </application>
 
 </manifest>
